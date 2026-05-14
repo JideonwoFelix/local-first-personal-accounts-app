@@ -12,24 +12,19 @@ export default function AccountsScreen(){
     const [cap, setCap] = useState('');
     const [tap, setTap] = useState('');
 
-    const onRead = async ()=>{
-        // const accountsCollection = database.get<Account>('accounts');
-        // await database.write(async () => {
-        //     await accountsCollection.create((accounts)=>{
-        //         accounts.name = 'test';
-        //         accounts.cap = 10.4;
-        //         accounts.tap = 20.1;
-        //     }
 
-        //     )
-
-        // })
-        const accounts = await accountsCollection.query().fetch();
-        console.log('Accounts', accounts);
-    }
-
-    const createAccount = ()=>{
+    const createAccount = async()=>{
         console.warn('Create account', tap, cap, name);
+        await database.write(async () => {
+            await accountsCollection.create((accounts)=>{
+                accounts.name = name;
+                accounts.cap = Number.parseFloat(cap);
+                accounts.tap = Number.parseFloat(tap);
+            });
+        })
+        setName('');
+        setCap('');
+        setTap('');
     }
     return(
         <View style={{gap: 5, padding: 5}}>
@@ -48,7 +43,6 @@ export default function AccountsScreen(){
             </View>
 
             <Button title="Add Account" onPress={createAccount}/>
-            <Button title="Test" onPress={onRead}/>
         </View>
     );
 }
