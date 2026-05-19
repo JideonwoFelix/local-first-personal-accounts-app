@@ -1,5 +1,5 @@
 import AccountsList from '@/components/AccountsList';
-import {View, Text, StyleSheet, Button, TextInput} from 'react-native';
+import {View, Text, StyleSheet, Button, TextInput, KeyboardAvoidingView, Platform} from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { useState } from 'react';
 import database, {accountsCollection} from '@/db';
@@ -26,24 +26,58 @@ export default function AccountsScreen(){
         setCap('');
         setTap('');
     }
+
+    // const onTest = async ()=>{
+    //     await database.write(async () => {
+    //         const accounts = await accountsCollection.query().fetch();
+    //         const account = accounts[2];
+    //         account.update((updatedAccount)=>{
+    //             updatedAccount.name = 'Updated namex2';
+    //         })
+    //     })
+    // }
+
     return(
-        <View style={{gap: 5, padding: 5}}>
-            <View style={styles.header}>
-                <Text>Name</Text>
-                <Text>CAP</Text>
-                <Text>TAP</Text>
-            </View>
-            <AccountsList />
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+            style={{ flex: 1 }}
+        >
+            <View style={{flex: 1, gap: 5, padding: 5}}>
+                <View style={styles.header}>
+                    <Text>Name</Text>
+                    <Text>CAP</Text>
+                    <Text>TAP</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                    <AccountsList />
+                </View>
+                <View style={styles.footerContainer}>
+                    <View style={styles.inputRow}>
+                        <TextInput 
+                            placeholder="Name" 
+                            style={styles.input} 
+                            value={name} 
+                            onChangeText={setName}
+                        />
+                        <TextInput 
+                            placeholder="CAP %" 
+                            style={styles.input} 
+                            value={cap} 
+                            onChangeText={setCap}
+                        />
+                        <TextInput 
+                            placeholder="TAP %" 
+                            style={styles.input} 
+                            value={tap} 
+                            onChangeText={setTap}
+                        />
+                    </View>
 
-            <View style={styles.inputRow}>
-                <TextInput placeholder="Name" style={styles.input} value={name} onChangeText={setName}/>
-                <TextInput placeholder="CAP %" style={styles.input} value={cap} onChangeText={setCap}/>
-                <TextInput placeholder="TAP %" style={styles.input} value={tap} onChangeText={setTap}/>
-                {/* <Entypo name="check" size={20} color="green"/> */}
+                    <Button title="Add Account" onPress={createAccount} />
+                    {/* <Button title="test update" onPress={onTest} /> */}
+                </View>
             </View>
-
-            <Button title="Add Account" onPress={createAccount}/>
-        </View>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -63,5 +97,12 @@ const styles = StyleSheet.create({
     },
     input:{
         flex: 1
-    }
+    },
+    footerContainer: {
+        paddingBottom: 10, // Adjust for notch/home indicator
+        backgroundColor: '#f8f8f8', 
+        gap: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#eee'
+    },
 });
