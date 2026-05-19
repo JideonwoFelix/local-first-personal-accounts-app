@@ -36,8 +36,13 @@ const styles = StyleSheet.create({
     name: {
         fontWeight: 'bold',
         fontSize: 16,
+        flex: 1
     },
-    percentage: {},
+    percentage: {
+        // fontWeight: 'bold',
+        flex: 1,
+        fontSize: 16,
+    },
 });
 
 
