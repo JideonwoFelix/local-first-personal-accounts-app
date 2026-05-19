@@ -1,12 +1,16 @@
 import { Stack } from 'expo-router';
 import { useState } from 'react';
 import {View, Text, StyleSheet, TextInput, Button} from 'react-native';
-import database, {allocationsCollection} from '@/db';
+import database, {accountsCollection, allocationsCollection} from '@/db';
+import { withObservables } from '@nozbe/watermelondb/react';
+import Allocation from '../../model/Allocations';
+import Account from '@/model/Accounts';
+import AccountListItem from '@/components/AccountListItem';
 
 
-export default function NewAllocationScreen(){
+function NewAllocationScreen( {accounts}: {accounts: Account[]} ){
 
-    const [income, setIcome] = useState('');
+    const [income, setIcome] = useState('0');
 
     const save = async ()=>{
         await database.write(async () => {
@@ -25,12 +29,23 @@ export default function NewAllocationScreen(){
             <View style={styles.inputRow} >
                 <Text style={styles.label}>Income</Text>
                 <TextInput placeholder="123" style={styles.input} value={income} onChangeText={setIcome}/>
-            </View>
+            </View> 
             <Button title="Save" onPress={save}/>
+            {accounts.map((account) => (
+                <View key={account.id} style={{flexDirection: 'row', justifyContent: 'space-between'}} >
+                    <Text>{account.name} : {account.cap}%</Text>
+                    <Text>${Number.parseFloat(income) * account.cap / 100 }</Text>
+                </View>
+            ))}
         </View>
     );
 }
 
+const enhance = withObservables([], () => ({
+    accounts: accountsCollection.query(),
+}))
+
+export default enhance(NewAllocationScreen)
 
 const styles = StyleSheet.create({
     container:{
